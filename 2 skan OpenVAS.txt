@@ -1,0 +1,302 @@
+I Summary
+=========
+
+This document reports on the results of an automatic security scan.
+The report first summarises the results found.
+Then, for each host, the report describes every issue found.
+Please consider the advice given in each description, in order to rectify
+the issue.
+
+All dates are displayed using the timezone "Coordinated Universal Time",
+which is abbreviated "UTC".
+
+Vendor security updates are not trusted.
+
+Overrides are off.  Even when a result has an override, this report uses
+the actual threat of the result.
+
+Notes are included in the report.Information on overrides is included in the report.
+
+This report might not show details of all issues that were found.
+Issues with the threat level "Log" are not shown.
+Issues with the threat level "Debug" are not shown.
+Issues with the threat level "False Positive" are not shown.
+Only results with a minimum QoD of 70 are shown.
+
+This report contains all 4 results selected by the
+filtering described above.  Before filtering there were 81 results.
+
+Scan started: Sun Jun 23 12:27:51 2024 UTC
+Scan ended:   Sun Jun 23 12:34:20 2024 UTC
+Task:         scan
+
+Host Summary
+************
+
+Host            High  Medium  Low  Log  False Positive
+192.168.100.12     1       1    1    0               0
+192.168.100.2      0       1    0    0               0
+Total: 2           1       2    1    0               0
+
+
+II Results per Host
+===================
+
+Host 192.168.100.12
+*******************
+
+Scanning of this host started at: Sun Jun 23 12:28:34 2024 UTC
+Number of results: 3
+
+Port Summary for Host 192.168.100.12
+------------------------------------
+
+Service (Port)          Threat Level
+445/tcp                 High (CVSS: 10.0)
+general/tcp             Low (CVSS: 2.6)
+
+Security Issues for Host 192.168.100.12
+---------------------------------------
+
+Issue
+-----
+NVT:    SMB Brute Force Logins With Default Credentials
+OID:    1.3.6.1.4.1.25623.1.0.804449
+Threat: High (CVSS: 10.0)
+Port:   445/tcp
+
+Summary:
+A number of known default credentials are tried for the login
+  via the SMB protocol.
+
+Vulnerability Detection Result:
+It was possible to login with the following credentials via the SMB protocol to !
+the 'IPC$' share. <User>:<Password>
+User:user
+
+Solution:
+Solution type: Mitigation
+Change the password as soon as possible.
+
+Vulnerability Detection Method:
+Tries to login with a number of known default credentials via
+  the SMB protocol.
+Details:
+SMB Brute Force Logins With Default Credentials
+(OID: 1.3.6.1.4.1.25623.1.0.804449)
+Version used: 2024-02-09T14:47:30Z
+
+References:
+ cve: CVE-1999-0503
+ cve: CVE-1999-0504
+ cve: CVE-1999-0505
+ cve: CVE-1999-0506
+ cve: CVE-2000-0222
+ cve: CVE-2005-3595
+
+
+Issue
+-----
+NVT:    Samba MS-RPC Remote Shell Command Execution Vulnerability - Active Check
+OID:    1.3.6.1.4.1.25623.1.0.108011
+Threat: Medium (CVSS: 6.0)
+Port:   445/tcp
+
+Product detection result: cpe:/a:samba:samba:3.0.20
+Detected by: SMB NativeLanMan (OID: 1.3.6.1.4.1.25623.1.0.102011)
+
+Summary:
+Samba is prone to a vulnerability that allows attackers to
+  execute arbitrary shell commands because the software fails to sanitize user-s!
+upplied input.
+
+Vulnerability Detection Result:
+Vulnerability was detected according to the Vulnerability Detection Method.
+
+Impact:
+An attacker may leverage this issue to execute arbitrary shell
+  commands on an affected system with the privileges of the application.
+
+Solution:
+Solution type: VendorFix
+Updates are available. Please see the referenced vendor advisory.
+
+Affected Software/OS:
+This issue affects Samba 3.0.0 through 3.0.25rc3.
+
+Vulnerability Detection Method:
+Send a crafted command to the samba server and check for a
+  remote command execution.
+Details:
+Samba MS-RPC Remote Shell Command Execution Vulnerability - Active Check
+(OID: 1.3.6.1.4.1.25623.1.0.108011)
+Version used: 2023-07-20T05:05:17Z
+
+Product Detection Result:
+Product:cpe:/a:samba:samba:3.0.20
+
+Method:SMB NativeLanMan
+(OID: 1.3.6.1.4.1.25623.1.0.102011)
+
+References:
+ cve: CVE-2007-2447
+ url: http://www.securityfocus.com/bid/23972
+ url: https://www.samba.org/samba/security/CVE-2007-2447.html
+
+
+Issue
+-----
+NVT:    TCP Timestamps Information Disclosure
+OID:    1.3.6.1.4.1.25623.1.0.80091
+Threat: Low (CVSS: 2.6)
+Port:   general/tcp
+
+Summary:
+The remote host implements TCP timestamps and therefore allows
+  to compute the uptime.
+
+Vulnerability Detection Result:
+It was detected that the host implements RFC1323/RFC7323.
+The following timestamps were retrieved with a delay of 1 seconds in-between:
+Packet 1: 318412
+Packet 2: 318532
+
+Impact:
+A side effect of this feature is that the uptime of the remote
+  host can sometimes be computed.
+
+Solution:
+Solution type: Mitigation
+To disable TCP timestamps on linux add the line
+  'net.ipv4.tcp_timestamps = 0' to /etc/sysctl.conf. Execute 'sysctl -p' to appl!
+y the settings at
+  runtime.
+  To disable TCP timestamps on Windows execute 'netsh int tcp set global timesta!
+mps=disabled'
+  Starting with Windows Server 2008 and Vista, the timestamp can not be complete!
+ly disabled.
+  The default behavior of the TCP/IP stack on this Systems is to not use the Tim!
+estamp options when
+  initiating TCP connections, but use them if the TCP peer that is initiating co!
+mmunication includes
+  them in their synchronize (SYN) segment.
+  See the references for more information.
+
+Affected Software/OS:
+TCP implementations that implement RFC1323/RFC7323.
+
+Vulnerability Insight:
+The remote host implements TCP timestamps, as defined by
+  RFC1323/RFC7323.
+
+Vulnerability Detection Method:
+Special IP packets are forged and sent with a little delay in
+  between to the target IP. The responses are searched for a timestamps. If foun!
+d, the timestamps
+  are reported.
+Details:
+TCP Timestamps Information Disclosure
+(OID: 1.3.6.1.4.1.25623.1.0.80091)
+Version used: 2023-12-15T16:10:08Z
+
+References:
+ url: https://datatracker.ietf.org/doc/html/rfc1323
+ url: https://datatracker.ietf.org/doc/html/rfc7323
+ url: https://web.archive.org/web/20151213072445/http://www.microsoft.com/en-us/download/details.aspx?id=9152
+ url: https://www.fortiguard.com/psirt/FG-IR-16-090
+
+
+Host 192.168.100.2
+******************
+
+Scanning of this host started at: Sun Jun 23 12:28:31 2024 UTC
+Number of results: 1
+
+Port Summary for Host 192.168.100.2
+-----------------------------------
+
+Service (Port)          Threat Level
+135/tcp                 Medium (CVSS: 5.0)
+
+Security Issues for Host 192.168.100.2
+--------------------------------------
+
+Issue
+-----
+NVT:    DCE/RPC and MSRPC Services Enumeration Reporting
+OID:    1.3.6.1.4.1.25623.1.0.10736
+Threat: Medium (CVSS: 5.0)
+Port:   135/tcp
+
+Summary:
+Distributed Computing Environment / Remote Procedure Calls (DCE/RPC) or MSRPC se!
+rvices running
+  on the remote host can be enumerated by connecting on port 135 and doing the a!
+ppropriate queries.
+
+Vulnerability Detection Result:
+Here is the list of DCE/RPC or MSRPC services running on this host via the TCP p!
+rotocol:
+Port: 49664/tcp
+     UUID: 12345778-1234-abcd-ef00-0123456789ac, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49664]
+     Named pipe : lsass
+     Win32 service or process : lsass.exe
+     Description : SAM access
+     UUID: 51a227ae-825b-41f2-b4a9-1ac9557a1018, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49664]
+     Annotation: Ngc Pop Key Service
+     UUID: 8fb74744-b2ff-4c00-be0d-9ef9a191fe1b, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49664]
+     Annotation: Ngc Pop Key Service
+     UUID: b25a52bf-e5dd-4f4a-aea6-8ca7272a0e86, version 2
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49664]
+     Annotation: KeyIso
+Port: 49665/tcp
+     UUID: d95afe70-a6d5-4259-822e-2c84da1ddb0d, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49665]
+Port: 49666/tcp
+     UUID: 3a9ef155-691d-4449-8d05-09ad57031823, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49666]
+     UUID: 86d35949-83c9-4044-b424-db363231fd0c, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49666]
+Port: 49667/tcp
+     UUID: f6beaff7-1e19-4fbb-9f8f-b89e2018337c, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49667]
+     Annotation: Windows Event Log
+Port: 49668/tcp
+     UUID: 0b6edbfa-4a24-4fc6-8a23-942b1eca65d1, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49668]
+     UUID: 12345678-1234-abcd-ef00-0123456789ab, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49668]
+     Named pipe : spoolss
+     Win32 service or process : spoolsv.exe
+     Description : Spooler service
+     UUID: 4a452661-8290-4b36-8fbe-7f4093a94978, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49668]
+     UUID: 76f03f96-cdfd-44fc-a22c-64950a001209, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49668]
+     UUID: ae33069b-a2a8-46ee-a235-ddfd339be281, version 1
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49668]
+Port: 49697/tcp
+     UUID: 367abb81-9844-35f1-ad32-98f038001003, version 2
+     Endpoint: ncacn_ip_tcp:127.0.0.1[49697]
+Note: DCE/RPC or MSRPC services running on this host locally were identified. Re!
+porting this list is not enabled by default due to the possible large size of th!
+is list. See the script preferences to enable this reporting.
+
+Impact:
+An attacker may use this fact to gain more knowledge
+  about the remote host.
+
+Solution:
+Solution type: Mitigation
+Filter incoming traffic to this ports.
+
+Vulnerability Detection Method:
+Details:
+DCE/RPC and MSRPC Services Enumeration Reporting
+(OID: 1.3.6.1.4.1.25623.1.0.10736)
+Version used: 2022-06-03T10:17:07Z
+
+
